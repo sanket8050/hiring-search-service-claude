@@ -1,0 +1,840 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResumeSync · HR Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+  :root {
+    --bg:       #080b10;
+    --surface:  #0e1318;
+    --card:     #121820;
+    --border:   #1e2a35;
+    --border2:  #263241;
+    --accent:   #00e5ff;
+    --accent2:  #7b61ff;
+    --green:    #00ff9d;
+    --warn:     #ff9f43;
+    --red:      #ff4757;
+    --text:     #e0eaf4;
+    --muted:    #5a7080;
+    --mono:     'DM Mono', monospace;
+    --head:     'Syne', sans-serif;
+    --body:     'Inter', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Grid BG ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Glow blobs ── */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .blob-1 { width: 600px; height: 600px; background: rgba(0,229,255,.05); top: -200px; left: -100px; }
+  .blob-2 { width: 400px; height: 400px; background: rgba(123,97,255,.06); bottom: 0; right: -100px; }
+
+  /* ── Layout ── */
+  .shell {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── Header ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 0 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 52px;
+  }
+
+  .logo {
+    font-family: var(--head);
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .logo-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-top: 2px;
+  }
+
+  .status-pill {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(0,255,157,.06);
+    border: 1px solid rgba(0,255,157,.2);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--green);
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--green);
+    animation: pulse 1.5s infinite;
+  }
+
+  /* ── Hero text ── */
+  .hero {
+    margin-bottom: 44px;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .hero-title {
+    font-family: var(--head);
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+  }
+
+  .hero-title span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 540px;
+  }
+
+  /* ── Query Box ── */
+  .query-box {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .query-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,229,255,.03), transparent 60%);
+    pointer-events: none;
+  }
+
+  .query-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .query-input-wrap {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+  }
+
+  textarea#queryInput {
+    flex: 1;
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 16px 18px;
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.6;
+    resize: none;
+    min-height: 80px;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  textarea#queryInput:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,229,255,.1);
+  }
+
+  textarea#queryInput::placeholder { color: var(--muted); }
+
+  .btn-search {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 0 28px;
+    height: 52px;
+    font-family: var(--head);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 0 24px rgba(0,229,255,.3);
+  }
+
+  .btn-search:hover { transform: translateY(-2px); box-shadow: 0 0 36px rgba(0,229,255,.5); }
+  .btn-search:active { transform: translateY(0); }
+  .btn-search:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+  /* Quick filters */
+  .quick-filters {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px;
+  }
+
+  .chip {
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border2);
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+    user-select: none;
+  }
+
+  .chip:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,.05); }
+
+  /* ── Loading ── */
+  .loading-bar {
+    height: 2px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 32px;
+    display: none;
+  }
+
+  .loading-bar.active { display: block; }
+
+  .loading-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    width: 0%;
+    transition: width .3s ease;
+    animation: loadAnim 2s ease-in-out infinite;
+  }
+
+  @keyframes loadAnim {
+    0%   { width: 0%;   margin-left: 0; }
+    50%  { width: 60%;  margin-left: 20%; }
+    100% { width: 0%;   margin-left: 100%; }
+  }
+
+  /* ── Results Header ── */
+  .results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    display: none;
+  }
+
+  .results-header.show { display: flex; }
+
+  .results-title {
+    font-family: var(--head);
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  .results-count {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .intent-badge {
+    background: rgba(123,97,255,.1);
+    border: 1px solid rgba(123,97,255,.3);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: #b5a8ff;
+    margin-bottom: 24px;
+    display: none;
+  }
+
+  .intent-badge.show { display: block; }
+  .intent-badge strong { color: #d4cfff; }
+
+  /* ── Candidate Cards ── */
+  .candidates-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .candidate-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color .2s, transform .15s;
+    animation: slideIn .3s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .candidate-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+  }
+
+  .candidate-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+    border-radius: 4px 0 0 4px;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+
+  .candidate-card:hover::before { opacity: 1; }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .candidate-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--head);
+    font-weight: 700;
+    font-size: 16px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .candidate-info { flex: 1; }
+
+  .candidate-name {
+    font-family: var(--head);
+    font-weight: 700;
+    font-size: 17px;
+    margin-bottom: 3px;
+  }
+
+  .candidate-role {
+    font-size: 13px;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .candidate-role::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  /* Score badge */
+  .score-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0,0,0,.3);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 10px 16px;
+    min-width: 68px;
+    text-align: center;
+  }
+
+  .score-value {
+    font-family: var(--head);
+    font-weight: 800;
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .score-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-top: 3px;
+  }
+
+  .score-high   { color: var(--green); }
+  .score-medium { color: var(--warn); }
+  .score-low    { color: var(--red); }
+
+  /* Skills */
+  .skills-wrap {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .skill-tag {
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: #8aa0b0;
+    transition: all .15s;
+  }
+
+  .skill-tag.highlight {
+    background: rgba(0,229,255,.08);
+    border-color: rgba(0,229,255,.25);
+    color: var(--accent);
+  }
+
+  /* Card meta */
+  .card-meta {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+
+  /* AI reason */
+  .ai-reason {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(123,97,255,.06);
+    border: 1px solid rgba(123,97,255,.15);
+    border-radius: 8px;
+    font-size: 12px;
+    color: #b5a8ff;
+    line-height: 1.5;
+  }
+
+  .ai-reason-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: #7b61ff;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* Contact reveal */
+  .contact-reveal {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: rgba(0,255,157,.04);
+    border: 1px solid rgba(0,255,157,.12);
+    border-radius: 8px;
+    display: none;
+  }
+
+  .contact-reveal.show { display: block; }
+  .contact-row { display: flex; gap: 24px; flex-wrap: wrap; }
+  .contact-item { font-size: 13px; }
+  .contact-item span { color: var(--muted); font-size: 11px; font-family: var(--mono); display: block; margin-bottom: 2px; }
+  .contact-item a { color: var(--green); text-decoration: none; }
+  .contact-item a:hover { text-decoration: underline; }
+
+  .btn-contact {
+    background: transparent;
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 5px 14px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all .15s;
+    float: right;
+    margin-top: -4px;
+  }
+
+  .btn-contact:hover { border-color: var(--green); color: var(--green); }
+
+  /* ── Empty / Error states ── */
+  .state-box {
+    text-align: center;
+    padding: 64px 24px;
+    display: none;
+  }
+
+  .state-box.show { display: block; }
+  .state-icon { font-size: 48px; margin-bottom: 16px; }
+  .state-title { font-family: var(--head); font-size: 20px; margin-bottom: 8px; }
+  .state-sub { color: var(--muted); font-size: 14px; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .card-top { flex-direction: column; }
+    .score-badge { flex-direction: row; gap: 8px; align-self: flex-start; }
+    .query-input-wrap { flex-direction: column; }
+    .btn-search { width: 100%; height: 48px; }
+  }
+  </style>
+  </head>
+  <body>
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="shell">
+
+    <!-- Header -->
+    <header>
+      <div>
+        <div class="logo">
+          <div class="logo-dot"></div>
+          ResumeSync
+        </div>
+        <div class="logo-sub">HR INTELLIGENCE ENGINE</div>
+      </div>
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        SYSTEM ONLINE
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-eyebrow">// CANDIDATE QUERY INTERFACE</div>
+      <h1 class="hero-title">Find the right talent<br><span>with natural language</span></h1>
+      <p class="hero-sub">Describe who you're looking for. The AI understands intent, not just keywords — returning ranked, relevant candidates from the database.</p>
+    </div>
+
+    <!-- Query Box -->
+    <div class="query-box">
+      <div class="query-label">// YOUR REQUIREMENT</div>
+      <div class="query-input-wrap">
+        <textarea id="queryInput" placeholder="e.g. I need a Python backend developer with at least 2 years experience, preferably familiar with FastAPI or Django..."></textarea>
+        <button class="btn-search" id="searchBtn" onclick="runQuery()">
+          ↗ SEARCH
+        </button>
+      </div>
+
+      <div class="quick-filters">
+        <span class="chip" onclick="setQuery('Full-stack developer with React and Node.js')">React + Node.js</span>
+        <span class="chip" onclick="setQuery('Python developer with machine learning experience')">Python + ML</span>
+        <span class="chip" onclick="setQuery('Java backend developer with Spring Boot')">Java Spring Boot</span>
+        <span class="chip" onclick="setQuery('Frontend developer good at UI, knows TypeScript and Tailwind')">Frontend / TS</span>
+        <span class="chip" onclick="setQuery('Mobile developer for Android or iOS')">Mobile Dev</span>
+        <span class="chip" onclick="setQuery('Freshers with good DSA and problem solving skills')">Freshers</span>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-bar" id="loadingBar">
+      <div class="loading-bar-fill"></div>
+    </div>
+
+    <!-- Results header -->
+    <div class="results-header" id="resultsHeader">
+      <div class="results-title">Matched Candidates</div>
+      <div class="results-count" id="resultsCount"></div>
+    </div>
+
+    <!-- Intent badge -->
+    <div class="intent-badge" id="intentBadge"></div>
+
+    <!-- Empty state -->
+    <div class="state-box" id="emptyState">
+      <div class="state-icon">🔍</div>
+      <div class="state-title">No candidates found</div>
+      <div class="state-sub">Try broadening your search or adjusting skill requirements</div>
+    </div>
+
+    <!-- Error state -->
+    <div class="state-box" id="errorState">
+      <div class="state-icon">⚠️</div>
+      <div class="state-title">Connection error</div>
+      <div class="state-sub" id="errorMsg">Could not reach the backend. Make sure the API server is running.</div>
+    </div>
+
+    <!-- Candidates -->
+    <div class="candidates-grid" id="candidatesGrid"></div>
+
+  </div>
+
+  <script>
+  // ── Config ──────────────────────────────────────────────────────────────────
+  const API_BASE = "http://localhost:8000"; // change to your deployed URL
+
+  // ── Helpers ─────────────────────────────────────────────────────────────────
+  function setQuery(text) {
+    document.getElementById("queryInput").value = text;
+    document.getElementById("queryInput").focus();
+  }
+
+  function scoreClass(score) {
+    const s = parseFloat(score);
+    if (s >= 7)  return "score-high";
+    if (s >= 4)  return "score-medium";
+    return "score-low";
+  }
+
+  function initials(name) {
+    return name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+  }
+
+  function highlightSkills(allSkills, required, preferred) {
+    const req  = (required  || []).map(s => s.toLowerCase());
+    const pref = (preferred || []).map(s => s.toLowerCase());
+    return allSkills.slice(0, 12).map(skill => {
+      const sl = skill.toLowerCase();
+      const isReq  = req.some(r  => sl.includes(r) || r.includes(sl));
+      const isPref = pref.some(p => sl.includes(p) || p.includes(sl));
+      return `<span class="skill-tag ${isReq || isPref ? 'highlight' : ''}">${skill}</span>`;
+    }).join("");
+  }
+
+  function toggleContact(id) {
+    const el = document.getElementById(`contact-${id}`);
+    el.classList.toggle("show");
+  }
+
+  // ── Main query function ──────────────────────────────────────────────────────
+  async function runQuery() {
+    const query = document.getElementById("queryInput").value.trim();
+    if (!query) return;
+
+    // UI reset
+    const btn = document.getElementById("searchBtn");
+    btn.disabled = true;
+    btn.textContent = "Searching...";
+    document.getElementById("loadingBar").classList.add("active");
+    document.getElementById("resultsHeader").classList.remove("show");
+    document.getElementById("intentBadge").classList.remove("show");
+    document.getElementById("emptyState").classList.remove("show");
+    document.getElementById("errorState").classList.remove("show");
+    document.getElementById("candidatesGrid").innerHTML = "";
+
+    try {
+      const res = await fetch(`${API_BASE}/api/hr/query`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, max_results: 10 })
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      renderResults(data);
+
+    } catch (err) {
+      document.getElementById("errorState").classList.add("show");
+      document.getElementById("errorMsg").textContent = err.message || "Backend unreachable";
+
+      // ── Demo mode: show mock data if backend is down ──
+      renderDemo(query);
+
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "↗ SEARCH";
+      document.getElementById("loadingBar").classList.remove("active");
+    }
+  }
+
+  function renderResults(data) {
+    const intent = data.search_metadata?.intent || {};
+
+    // Intent badge
+    if (data.intent_summary) {
+      const badge = document.getElementById("intentBadge");
+      badge.innerHTML = `<strong>AI understood:</strong> ${data.intent_summary}`;
+      badge.classList.add("show");
+    }
+
+    // Results count
+    document.getElementById("resultsHeader").classList.add("show");
+    document.getElementById("resultsCount").textContent =
+      `${data.candidates.length} of ${data.total_found} matches`;
+
+    if (!data.candidates.length) {
+      document.getElementById("emptyState").classList.add("show");
+      return;
+    }
+
+    renderCards(data.candidates, intent.required_skills, intent.preferred_skills);
+  }
+
+  function renderCards(candidates, required, preferred) {
+    const grid = document.getElementById("candidatesGrid");
+    grid.innerHTML = "";
+
+    candidates.forEach((c, idx) => {
+      const scoreNum   = c.ai_match_score ?? c.fit_score ?? 0;
+      const scoreDisp  = typeof scoreNum === "number" ? scoreNum.toFixed(1) : scoreNum;
+      const cls        = scoreClass(scoreNum);
+      const nameInit   = initials(c.name || "??");
+      const skillsHTML = highlightSkills(c.technical_skills || [], required, preferred);
+
+      const card = document.createElement("div");
+      card.className = "candidate-card";
+      card.style.animationDelay = `${idx * 60}ms`;
+
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="candidate-avatar">${nameInit}</div>
+          <div class="candidate-info">
+            <div class="candidate-name">${c.name}</div>
+            <div class="candidate-role">${c.current_role}</div>
+          </div>
+          <div class="score-badge">
+            <div class="score-value ${cls}">${scoreDisp}</div>
+            <div class="score-label">MATCH</div>
+          </div>
+        </div>
+
+        <div class="skills-wrap">${skillsHTML}</div>
+
+        <div class="card-meta">
+          <div class="meta-item">📅 ${c.years_experience}</div>
+          <div class="meta-item">📍 ${c.location || "—"}</div>
+          ${c.notice_period ? `<div class="meta-item">⏱ ${c.notice_period}</div>` : ""}
+          ${c.expected_salary ? `<div class="meta-item">💼 ${c.expected_salary}</div>` : ""}
+        </div>
+
+        ${c.ai_match_reason ? `
+          <div class="ai-reason">
+            <span class="ai-reason-label">// AI ASSESSMENT</span>
+            ${c.ai_match_reason}
+          </div>` : ""}
+
+        <button class="btn-contact" onclick="toggleContact('${c.id}')">View Contact ↓</button>
+
+        <div class="contact-reveal" id="contact-${c.id}">
+          <div class="contact-row">
+            <div class="contact-item">
+              <span>EMAIL</span>
+              <a href="mailto:${c.email}">${c.email}</a>
+            </div>
+            <div class="contact-item">
+              <span>PHONE</span>
+              <a href="tel:${c.phone}">${c.phone}</a>
+            </div>
+            <div class="contact-item">
+              <span>ID</span>
+              <code style="font-family:var(--mono);font-size:11px;color:var(--muted)">${c.id}</code>
+            </div>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  // ── Demo mode (no backend) ───────────────────────────────────────────────────
+  function renderDemo(query) {
+    const mockData = {
+      intent_summary: `Looking for candidates matching: "${query}" (demo mode — backend offline)`,
+      total_found: 1,
+      candidates: [{
+        id: "697736bce9c9f9df4084909d",
+        name: "Sushant Jadhav",
+        email: "jadhavsushant379@gmail.com",
+        location: "Pune",
+        phone: "8530690469",
+        current_role: "Full-Stack Developer",
+        years_experience: "Less than 1 year",
+        technical_skills: ["JavaScript","TypeScript","React.js","Next.js","Node.js","Express.js","MongoDB","FastAPI","PostgreSQL","Tailwind CSS"],
+        fit_score: "6",
+        fit_reasoning: ["Strong technical foundation","Good full-stack skills","Limited experience"],
+        ai_match_score: 6.0,
+        ai_match_reason: "Demo mode active — connect backend for live AI matching.",
+        expected_salary: "6 LPA",
+        notice_period: "Immediate"
+      }]
+    };
+    renderResults(mockData);
+  }
+
+  // ── Enter key submit ─────────────────────────────────────────────────────────
+  document.getElementById("queryInput").addEventListener("keydown", e => {
+    if (e.key === "Enter" && e.ctrlKey) runQuery();
+  });
+  </script>
+  </body>
+  </html>
